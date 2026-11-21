@@ -1,0 +1,22 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "lidar-svx"
+version = "0.1.0"
+description = "Extract a candidate 3D cave survey graph from registered LiDAR returns"
+requires-python = ">=3.11"
+dependencies = [
+    "laspy[lazrs]>=2.5,<3", "numpy>=1.25,<3", "scipy>=1.11,<2",
+    "pyproj>=3.6,<4",
+]
+
+[project.scripts]
+lidar-svx = "lidar_svx.cli:main"
+
+[tool.setuptools]
+packages = ["lidar_svx"]
+
+[dependency-groups]
+dev = ["pytest>=8", "matplotlib>=3.8"]
