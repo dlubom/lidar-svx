@@ -1,6 +1,7 @@
 """Known passage graphs rasterized as walls. No trajectory is supplied."""
 
 import unittest
+from itertools import pairwise
 
 import numpy as np
 from scipy import ndimage
@@ -124,7 +125,7 @@ class TopologyTest(unittest.TestCase):
         solid = np.zeros(points.shape[:3], dtype=bool)
         for curve in (corners, outlet):
             curve = rotation.apply(curve) + [40, 36, 26]
-            for start, end in zip(curve[:-1], curve[1:]):
+            for start, end in pairwise(curve):
                 d = end - start
                 t = np.clip(((points - start) @ d) / (d @ d), 0, 1)
                 solid |= np.sum((points - start - t[..., None] * d) ** 2, axis=-1) <= 16

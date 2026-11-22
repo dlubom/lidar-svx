@@ -1,17 +1,17 @@
 """Reduce degree-two station chains, preserving graph topology and inferred interior."""
 
 from collections import Counter
-from itertools import product
+from itertools import pairwise, product
 
 import numpy as np
 
 
 def _chains(edges, n):
-    adjacency = [[] for _ in range(n)]
+    adjacency: list[list[int]] = [[] for _ in range(n)]
     for a, b in edges:
         adjacency[a].append(b)
         adjacency[b].append(a)
-    visited = set()
+    visited: set[tuple[int, int]] = set()
     chains = []
     # Walking from junctions first leaves only detached degree-two rings at the end.
     order = sorted(range(n), key=lambda i: len(adjacency[i]) == 2)
@@ -47,7 +47,7 @@ def _inside(start, delta, mask):
     for k in np.flatnonzero(on_plane.sum(axis=1) >= 2):
         options = [
             (int(r) - 1, int(r)) if tied else (int(np.floor(x)),)
-            for x, r, tied in zip(boundary[k], rounded[k], on_plane[k])
+            for x, r, tied in zip(boundary[k], rounded[k], on_plane[k], strict=True)
         ]
         if not all(mask[index] for index in product(*options)):
             return False
@@ -89,7 +89,7 @@ def generalize(points, edges, mask, tolerance_voxels):
             cuts = [0, last // 3, (2 * last) // 3, last]
         elif pairs[pair] > 1 and last > 1:
             cuts = [0, last // 2, last]
-        for lo, hi in zip(cuts, cuts[1:]):
+        for lo, hi in pairwise(cuts):
             result.extend(_reduce(chain[lo : hi + 1], points, mask, tolerance_voxels))
     used, indices = np.unique(np.asarray(result), return_inverse=True)
     return points[used], indices.reshape(-1, 2)

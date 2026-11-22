@@ -4,11 +4,11 @@ from itertools import product
 from math import prod
 
 import numpy as np
+from numpy.typing import NDArray
 from scipy.sparse import coo_matrix
 from scipy.sparse.csgraph import connected_components
 
 from .grid import SparseMask
-
 
 # One of each pair of antipodal directions, cardinal axes first.
 DIRECTIONS = sorted(
@@ -17,7 +17,9 @@ DIRECTIONS = sorted(
 )
 
 
-def _intervals(walls, direction, strides, local_span=None):
+def _intervals(
+    walls, direction, strides, local_span=None
+) -> tuple[NDArray, NDArray, int]:
     """Flat-index gaps bounded by consecutive wall runs on the same ray."""
     d = np.asarray(direction)
     axis = np.flatnonzero(d)[0]

@@ -19,7 +19,6 @@ from matplotlib.collections import LineCollection
 from matplotlib.colors import LinearSegmentedColormap
 from matplotlib.lines import Line2D
 
-
 PROJECTIONS = ((0, 1), (0, 2), (1, 2))
 
 
@@ -48,7 +47,7 @@ def compare_reference(paths, source_digest, names, legs):
         raise ValueError("reference sections use a different source LAZ")
     with axis_path.open(newline="") as stream:
         axis = list(csv.DictReader(stream))
-    endpoints = set()
+    endpoints: set[int] = set()
     for i, row in enumerate(axis[:-1]):
         if int(row["edge_exported"]):
             endpoints.update((i, i + 1))
@@ -58,6 +57,7 @@ def compare_reference(paths, source_digest, names, legs):
     length_sq = np.einsum("ij,ij->i", direction, direction)
     distances, reviewed_distances = [], []
     furthest = {}
+    furthest_distance = -1.0
     for i in sorted(endpoints):
         row = axis[i]
         point = np.array([float(row[k]) for k in "xyz"])
@@ -70,7 +70,8 @@ def compare_reference(paths, source_digest, names, legs):
         distances.append(distance)
         if int(row["station"]) in reviewed:
             reviewed_distances.append(distance)
-        if distance > furthest.get("distance", -1):
+        if distance > furthest_distance:
+            furthest_distance = distance
             furthest = {
                 "station": int(row["station"]),
                 "xyz": point.tolist(),
@@ -114,7 +115,7 @@ def check_segments(xyz, first_record, segments, radius, records):
     lengths = np.linalg.norm(directions, axis=1)
     candidates = tree.query_ball_point((a + b) / 2, lengths / 2 + radius)
     for start, delta, length, ids, row in zip(
-        a, directions, lengths, candidates, records
+        a, directions, lengths, candidates, records, strict=True
     ):
         if not ids:
             continue
@@ -149,7 +150,7 @@ def draw(path, source_name, legs, images, origin, pixel, radius, records):
     contacts = [
         row["leg_row_0based"] for row in records if row["returns_within_radius"]
     ]
-    for ax, (x, y), image in zip(axes, PROJECTIONS, images):
+    for ax, (x, y), image in zip(axes, PROJECTIONS, images, strict=True):
         rows, cols = image.shape
         extent = (
             origin[x],
@@ -260,7 +261,7 @@ def main():
         parser.error("coincident stations in selected leg")
     rows = [
         dict(
-            zip(("from", "to"), names[i]),
+            zip(("from", "to"), names[i], strict=True),
             leg_row_0based=int(i),
             returns_within_radius=0,
             distance=None,
@@ -281,7 +282,7 @@ def main():
         for chunk in reader.chunk_iterator(500_000):
             xyz = np.column_stack((chunk.x, chunk.y, chunk.z))
             coords = np.floor((xyz - origin) / pixel).astype(np.intp)
-            for (x, y), image in zip(PROJECTIONS, images):
+            for (x, y), image in zip(PROJECTIONS, images, strict=True):
                 cell = coords[:, y] * image.shape[1] + coords[:, x]
                 image += np.bincount(cell, minlength=image.size).reshape(image.shape)
             check_segments(xyz, first_record, check, args.radius, rows)

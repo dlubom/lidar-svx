@@ -11,14 +11,14 @@ import numpy as np
 
 
 def _spanning_forest(station_count, edges):
-    adjacency = [[] for _ in range(station_count)]
+    adjacency: list[list[int]] = [[] for _ in range(station_count)]
     for start, end in edges:
         adjacency[start].append(end)
         adjacency[end].append(start)
     labels = [-1] * station_count
     parent = [-1] * station_count
     depth = [0] * station_count
-    anchors = []
+    anchors: list[int] = []
     for station, neighbours in enumerate(adjacency):
         if not neighbours:
             raise ValueError(f"station s{station} has no leg")
