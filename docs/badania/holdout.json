@@ -1,0 +1,591 @@
+{
+  "method": "XYZ wall observations shuffled with fixed seeds. Reference samples at <=0.20 spacing. Connected coverage is the maximum count within 0.8 of one exported component per truth component. False merge counts components covering >=20% of each of multiple disjoint truths. Tube containment is length-weighted on intervals <=0.08, using distance to a densely sampled axis.",
+  "seed": 95431,
+  "orientation_zyx_degrees": [
+    -37,
+    27,
+    49
+  ],
+  "shift_xyz": [
+    0.071,
+    0.043,
+    0.089
+  ],
+  "independent_grid_target": true,
+  "generator_source_sha256": {
+    "__init__.py": "ffc5e26ef9d3ad3319cfddf5e6d215d5ea242114bedbc5bcfbb1c14ec40218c2",
+    "__main__.py": "935a1c1166b0c1ea35a82256345000bf2c73ded718d77773bc27a71ecce28f7d",
+    "acquisition.py": "b3ab71bca042699da951098c474b232485147035c94cf133c50033cbf8e5313b",
+    "cli.py": "7503f94c24a00564df181a2cbf7b00a5988649608eb10a43d86f76ff7e407815",
+    "cloud.py": "f523a9917e2244f253711fc8543aa01555758bcf216e93000a54ae577d8761eb",
+    "export.py": "9f231cb3002a3c50b9e6e8673d35bffecf09a5f14959d4abba49ca3b0ddd796c",
+    "generalize.py": "67fa1a1b2ac585f970dcb446488d46078bf94c2f7bc3bcef315165bd3a374b63",
+    "grid.py": "816758f8b8f227978fca3828863212682b49b4247169ee8568ac9a795990fa4e",
+    "topology.py": "ec512430b99cf0aa96878fcf6cc0107dc92c5e2baff95a3e0574cfc3e8e030bb",
+    "volume.py": "0fe6647242303f98c8b692438cafced06d23e2b549910ab48f9869405b41aeff"
+  },
+  "generator_args": [
+    "--voxel",
+    "0.12",
+    "--min-returns",
+    "3",
+    "--wall-span",
+    "11",
+    "--band-width",
+    "3.3",
+    "--min-branch-length",
+    "4",
+    "--tolerance",
+    "0.3"
+  ],
+  "summary": {
+    "cases": 12,
+    "component_count_matches": 12,
+    "cycle_rank_matches": 11,
+    "disjoint_control_cases": 4,
+    "disjoint_controls_with_false_merges": [],
+    "topology_matches_and_no_false_merge": 11,
+    "failed_topology": [
+      "figure_eight"
+    ],
+    "endpoint_count_matches": 11,
+    "failed_endpoint_count": [
+      "figure_eight"
+    ],
+    "component_cycle_endpoint_counts_and_separation_match": 11,
+    "at_least_80pct_of_every_curve_within_0_8_of_its_best_component": 7,
+    "failed_curve_coverage": [
+      "bend_missing_115_degrees",
+      "bend_missing_150_degrees",
+      "bend_missing_180_degrees",
+      "unobserved_span",
+      "figure_eight"
+    ],
+    "at_least_99pct_of_exported_length_inside_true_tubes": 12,
+    "failed_length_containment": []
+  },
+  "cases": {
+    "bend_missing_0_degrees": {
+      "source_sha256": "7a065f13e9151ad6688687332386352c2804fd6c65a876e35a87d4384c9e9a6e",
+      "returns": 109652,
+      "seed": 95431,
+      "components": 1,
+      "expected_components": 1,
+      "cycle_rank": 0,
+      "expected_cycle_rank": 0,
+      "endpoints": 2,
+      "expected_endpoints": 2,
+      "true_tips_distance_to_leg": [
+        2.783,
+        2.1022
+      ],
+      "true_tips_distance_to_generated_endpoint": [
+        2.783,
+        2.1022
+      ],
+      "reference_samples": [
+        202
+      ],
+      "covered_reference_samples": [
+        175
+      ],
+      "connected_coverage_fraction": [
+        0.8663
+      ],
+      "curve_coverage_in_best_component": [
+        0.8663
+      ],
+      "curve_distance_to_best_component_p50_p90": [
+        [
+          0.5406,
+          0.937
+        ]
+      ],
+      "false_merge_components": 0,
+      "sampled_length_inside_true_tubes_fraction": 1.0
+    },
+    "bend_missing_115_degrees": {
+      "source_sha256": "d420d58fe56df8f7deb2b8b9f3f7fd26d6ddbfd7071c34da4fbf0d69678e5b65",
+      "returns": 91569,
+      "seed": 95431,
+      "components": 1,
+      "expected_components": 1,
+      "cycle_rank": 0,
+      "expected_cycle_rank": 0,
+      "endpoints": 2,
+      "expected_endpoints": 2,
+      "true_tips_distance_to_leg": [
+        2.783,
+        2.1022
+      ],
+      "true_tips_distance_to_generated_endpoint": [
+        2.783,
+        2.1022
+      ],
+      "reference_samples": [
+        202
+      ],
+      "covered_reference_samples": [
+        133
+      ],
+      "connected_coverage_fraction": [
+        0.6584
+      ],
+      "curve_coverage_in_best_component": [
+        0.6584
+      ],
+      "curve_distance_to_best_component_p50_p90": [
+        [
+          0.7005,
+          1.0433
+        ]
+      ],
+      "false_merge_components": 0,
+      "sampled_length_inside_true_tubes_fraction": 1.0
+    },
+    "bend_missing_150_degrees": {
+      "source_sha256": "bfa9ccdd670eefad5a1ce9c61a61203407ffb5bbdac2709144f6eabe656a49ca",
+      "returns": 89923,
+      "seed": 95431,
+      "components": 1,
+      "expected_components": 1,
+      "cycle_rank": 0,
+      "expected_cycle_rank": 0,
+      "endpoints": 2,
+      "expected_endpoints": 2,
+      "true_tips_distance_to_leg": [
+        2.783,
+        2.1022
+      ],
+      "true_tips_distance_to_generated_endpoint": [
+        2.783,
+        2.1022
+      ],
+      "reference_samples": [
+        202
+      ],
+      "covered_reference_samples": [
+        135
+      ],
+      "connected_coverage_fraction": [
+        0.6683
+      ],
+      "curve_coverage_in_best_component": [
+        0.6683
+      ],
+      "curve_distance_to_best_component_p50_p90": [
+        [
+          0.7053,
+          1.0071
+        ]
+      ],
+      "false_merge_components": 0,
+      "sampled_length_inside_true_tubes_fraction": 1.0
+    },
+    "bend_missing_180_degrees": {
+      "source_sha256": "4cdd804b26914792292148a75fb9022d69e8e09d82ffe85e1917d43814f0a3e6",
+      "returns": 88337,
+      "seed": 95431,
+      "components": 1,
+      "expected_components": 1,
+      "cycle_rank": 0,
+      "expected_cycle_rank": 0,
+      "endpoints": 2,
+      "expected_endpoints": 2,
+      "true_tips_distance_to_leg": [
+        2.783,
+        2.1022
+      ],
+      "true_tips_distance_to_generated_endpoint": [
+        2.783,
+        2.1022
+      ],
+      "reference_samples": [
+        202
+      ],
+      "covered_reference_samples": [
+        126
+      ],
+      "connected_coverage_fraction": [
+        0.6238
+      ],
+      "curve_coverage_in_best_component": [
+        0.6238
+      ],
+      "curve_distance_to_best_component_p50_p90": [
+        [
+          0.7245,
+          1.082
+        ]
+      ],
+      "false_merge_components": 0,
+      "sampled_length_inside_true_tubes_fraction": 1.0
+    },
+    "ring_with_outlet": {
+      "source_sha256": "61a4e0d6e4c77e0bf74a4226634071b96ebc7337b90fd610389e93ae46b19806",
+      "returns": 159554,
+      "seed": 95432,
+      "components": 1,
+      "expected_components": 1,
+      "cycle_rank": 1,
+      "expected_cycle_rank": 1,
+      "endpoints": 1,
+      "expected_endpoints": 1,
+      "true_tips_distance_to_leg": [
+        2.2183
+      ],
+      "true_tips_distance_to_generated_endpoint": [
+        2.2183
+      ],
+      "reference_samples": [
+        283
+      ],
+      "covered_reference_samples": [
+        275
+      ],
+      "connected_coverage_fraction": [
+        0.9717
+      ],
+      "curve_coverage_in_best_component": [
+        1.0,
+        0.8689
+      ],
+      "curve_distance_to_best_component_p50_p90": [
+        [
+          0.0705,
+          0.1828
+        ],
+        [
+          0.4191,
+          1.063
+        ]
+      ],
+      "false_merge_components": 0,
+      "sampled_length_inside_true_tubes_fraction": 1.0
+    },
+    "stacked_crossing": {
+      "source_sha256": "182764b1899ff4ebfe3b8ac8f5ba24b59196459f0f042baa35db0b19cf10b0cd",
+      "returns": 164949,
+      "seed": 95433,
+      "components": 2,
+      "expected_components": 2,
+      "cycle_rank": 0,
+      "expected_cycle_rank": 0,
+      "endpoints": 4,
+      "expected_endpoints": 4,
+      "true_tips_distance_to_leg": [
+        2.1541,
+        2.2403,
+        2.3822,
+        2.2566
+      ],
+      "true_tips_distance_to_generated_endpoint": [
+        2.1541,
+        2.2403,
+        2.3822,
+        2.2566
+      ],
+      "reference_samples": [
+        152,
+        151
+      ],
+      "covered_reference_samples": [
+        136,
+        133
+      ],
+      "connected_coverage_fraction": [
+        0.8947,
+        0.8808
+      ],
+      "curve_coverage_in_best_component": [
+        0.8947,
+        0.8808
+      ],
+      "curve_distance_to_best_component_p50_p90": [
+        [
+          0.3561,
+          0.9047
+        ],
+        [
+          0.2739,
+          1.0071
+        ]
+      ],
+      "false_merge_components": 0,
+      "sampled_length_inside_true_tubes_fraction": 1.0
+    },
+    "parallel_passages": {
+      "source_sha256": "715f90a36a7ab16217f007496320ab5f65dccc8116bd1b548ec442b557a97924",
+      "returns": 164386,
+      "seed": 95434,
+      "components": 2,
+      "expected_components": 2,
+      "cycle_rank": 0,
+      "expected_cycle_rank": 0,
+      "endpoints": 4,
+      "expected_endpoints": 4,
+      "true_tips_distance_to_leg": [
+        2.2609,
+        2.0106,
+        1.9644,
+        1.9323
+      ],
+      "true_tips_distance_to_generated_endpoint": [
+        2.2609,
+        2.0106,
+        1.9644,
+        1.9323
+      ],
+      "reference_samples": [
+        152,
+        152
+      ],
+      "covered_reference_samples": [
+        137,
+        138
+      ],
+      "connected_coverage_fraction": [
+        0.9013,
+        0.9079
+      ],
+      "curve_coverage_in_best_component": [
+        0.9013,
+        0.9079
+      ],
+      "curve_distance_to_best_component_p50_p90": [
+        [
+          0.3873,
+          0.7897
+        ],
+        [
+          0.3068,
+          0.6711
+        ]
+      ],
+      "false_merge_components": 0,
+      "sampled_length_inside_true_tubes_fraction": 1.0
+    },
+    "unobserved_span": {
+      "source_sha256": "50e606cc36d3b121976fe01c25f46ee1207e79cbbc7d7d6d5a834930199cfbd6",
+      "returns": 82258,
+      "seed": 95435,
+      "components": 2,
+      "expected_components": 2,
+      "cycle_rank": 0,
+      "expected_cycle_rank": 0,
+      "endpoints": 4,
+      "expected_endpoints": 4,
+      "true_tips_distance_to_leg": [
+        2.0218,
+        1.9114,
+        2.4271,
+        2.0554
+      ],
+      "true_tips_distance_to_generated_endpoint": [
+        2.0218,
+        1.9114,
+        2.4271,
+        2.0554
+      ],
+      "reference_samples": [
+        76,
+        76
+      ],
+      "covered_reference_samples": [
+        62,
+        60
+      ],
+      "connected_coverage_fraction": [
+        0.8158,
+        0.7895
+      ],
+      "curve_coverage_in_best_component": [
+        0.8158,
+        0.7895
+      ],
+      "curve_distance_to_best_component_p50_p90": [
+        [
+          0.5858,
+          1.3156
+        ],
+        [
+          0.4606,
+          1.5659
+        ]
+      ],
+      "false_merge_components": 0,
+      "sampled_length_inside_true_tubes_fraction": 1.0
+    },
+    "solid_plug": {
+      "source_sha256": "bc58c8e9809be21d50537c034cc208ed6e8cd4eb952fdd41bd013ce742d69b60",
+      "returns": 91623,
+      "seed": 95436,
+      "components": 2,
+      "expected_components": 2,
+      "cycle_rank": 0,
+      "expected_cycle_rank": 0,
+      "endpoints": 4,
+      "expected_endpoints": 4,
+      "true_tips_distance_to_leg": [
+        2.9123,
+        1.1378,
+        0.9688,
+        1.9425
+      ],
+      "true_tips_distance_to_generated_endpoint": [
+        2.9123,
+        1.1378,
+        0.9698,
+        1.9425
+      ],
+      "reference_samples": [
+        79,
+        79
+      ],
+      "covered_reference_samples": [
+        66,
+        71
+      ],
+      "connected_coverage_fraction": [
+        0.8354,
+        0.8987
+      ],
+      "curve_coverage_in_best_component": [
+        0.8354,
+        0.8987
+      ],
+      "curve_distance_to_best_component_p50_p90": [
+        [
+          0.3586,
+          1.3739
+        ],
+        [
+          0.4684,
+          0.8002
+        ]
+      ],
+      "false_merge_components": 0,
+      "sampled_length_inside_true_tubes_fraction": 1.0
+    },
+    "bend_below_surface_scan": {
+      "source_sha256": "357d9b22c0ff9ea18e3d1656c08ae63cd5cc533e5bc458af27849b72fc2949fd",
+      "returns": 705296,
+      "seed": 95431,
+      "components": 1,
+      "expected_components": 1,
+      "cycle_rank": 0,
+      "expected_cycle_rank": 0,
+      "endpoints": 2,
+      "expected_endpoints": 2,
+      "true_tips_distance_to_leg": [
+        2.3775,
+        2.0602
+      ],
+      "true_tips_distance_to_generated_endpoint": [
+        2.3775,
+        2.1389
+      ],
+      "reference_samples": [
+        202
+      ],
+      "covered_reference_samples": [
+        163
+      ],
+      "connected_coverage_fraction": [
+        0.8069
+      ],
+      "curve_coverage_in_best_component": [
+        0.8069
+      ],
+      "curve_distance_to_best_component_p50_p90": [
+        [
+          0.5913,
+          0.903
+        ]
+      ],
+      "false_merge_components": 0,
+      "sampled_length_inside_true_tubes_fraction": 1.0
+    },
+    "oblique_ring_with_outlet": {
+      "source_sha256": "d3f01cc2e92928424adac6d277a2b52f3498652313ddb25462090a7c1bd6f0f7",
+      "returns": 159923,
+      "seed": 95438,
+      "components": 1,
+      "expected_components": 1,
+      "cycle_rank": 1,
+      "expected_cycle_rank": 1,
+      "endpoints": 1,
+      "expected_endpoints": 1,
+      "true_tips_distance_to_leg": [
+        1.5519
+      ],
+      "true_tips_distance_to_generated_endpoint": [
+        2.2844
+      ],
+      "reference_samples": [
+        283
+      ],
+      "covered_reference_samples": [
+        277
+      ],
+      "connected_coverage_fraction": [
+        0.9788
+      ],
+      "curve_coverage_in_best_component": [
+        1.0,
+        0.9016
+      ],
+      "curve_distance_to_best_component_p50_p90": [
+        [
+          0.0973,
+          0.2374
+        ],
+        [
+          0.5671,
+          0.7997
+        ]
+      ],
+      "false_merge_components": 0,
+      "sampled_length_inside_true_tubes_fraction": 1.0
+    },
+    "figure_eight": {
+      "source_sha256": "9cc3fb0a7152be8b8495abfd4546a25349f6d42b50febdbc2b34774f57ce490c",
+      "returns": 129555,
+      "seed": 95439,
+      "components": 1,
+      "expected_components": 1,
+      "cycle_rank": 1,
+      "expected_cycle_rank": 2,
+      "endpoints": 1,
+      "expected_endpoints": 0,
+      "true_tips_distance_to_leg": [],
+      "true_tips_distance_to_generated_endpoint": [],
+      "reference_samples": [
+        370
+      ],
+      "covered_reference_samples": [
+        172
+      ],
+      "connected_coverage_fraction": [
+        0.4649
+      ],
+      "curve_coverage_in_best_component": [
+        0.4108,
+        0.5189
+      ],
+      "curve_distance_to_best_component_p50_p90": [
+        [
+          0.8289,
+          0.9597
+        ],
+        [
+          0.7958,
+          0.9565
+        ]
+      ],
+      "false_merge_components": 0,
+      "sampled_length_inside_true_tubes_fraction": 1.0
+    }
+  },
+  "benchmark_sha256": "6da9aee3278461cd594c3dbd16876e3188f0f30b328642daa6b525c1467ec2aa"
+}

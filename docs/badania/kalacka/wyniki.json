@@ -1,0 +1,93 @@
+{
+  "components": 1,
+  "expected_components": 1,
+  "cycle_rank": 0,
+  "expected_cycle_rank": 0,
+  "endpoints": 2,
+  "expected_endpoints": 3,
+  "true_tips_distance_to_leg": [
+    6.1143,
+    4.5916,
+    2.0275
+  ],
+  "true_tips_distance_to_generated_endpoint": [
+    7.9093,
+    4.5916,
+    2.1399
+  ],
+  "reference_samples": [
+    192
+  ],
+  "covered_reference_samples": [
+    129
+  ],
+  "connected_coverage_fraction": [
+    0.6719
+  ],
+  "curve_coverage_in_best_component": [
+    0.2821,
+    0.6038,
+    0.86
+  ],
+  "curve_distance_to_best_component_p50_p90": [
+    [
+      2.3681,
+      5.3638
+    ],
+    [
+      0.6925,
+      3.5835
+    ],
+    [
+      0.2207,
+      0.9328
+    ]
+  ],
+  "false_merge_components": 0,
+  "sampled_length_inside_true_tubes_fraction": 1.0,
+  "native": {
+    "sha256": "e37e56679d98b7c246a9cd114c3bb1390182840222fa20a3d0fb23c97e7fda78",
+    "stations": 18,
+    "legs": 17,
+    "names_match": true,
+    "max_axis_difference": 2.6645352591003757e-15,
+    "all_native_leg_geometries_match": true
+  },
+  "source_3d_sha256": "703d021fd054ca025cbaf74dbbc551ad55631d78da086c435c4f500bccc5f367",
+  "synthetic_xyz_sha256": "4460277500f69ac7afda7f3f994ee5616c6353315be2dc5fb874a7d286debc3c",
+  "example": {
+    "source_paths": [
+      [
+        "1.0",
+        "1.1"
+      ],
+      [
+        "1.1",
+        "1.2"
+      ],
+      [
+        "1.1",
+        "1.4",
+        "1.8"
+      ]
+    ],
+    "origin": [
+      424887.24,
+      5456470.36,
+      1225.25
+    ],
+    "points": 98325,
+    "legs": 17,
+    "stations": 18,
+    "degrees": [
+      0,
+      2,
+      16
+    ]
+  },
+  "arm_lengths_m": [
+    7.514818693713851,
+    10.215728069906826,
+    19.69058727678874
+  ]
+}

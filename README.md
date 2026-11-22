@@ -2,6 +2,23 @@
 
 `lidar-svx` zamienia zarejestrowaną chmurę powierzchni jaskini w **hipotezę przestrzennej sieci pomiarowej**. Przyjmuje LAS, LAZ oraz tekstowe XYZ. Sam wyznacza końce i rozgałęzienia. Dwie drogi, które rozdzielają się i ponownie łączą, mogą utworzyć w Survex zamkniętą pętlę. Osobne fragmenty dostają osobne dowiązania w lokalnym układzie modelu.
 
+## Jak pracować nad benchmarkiem
+
+Przed pierwszą kartą przeczytaj [porównanie sali i zakrętu](docs/badania/ocena-szkieletu.md#dwie-kontrole-analityczne) i [cztery kryteria karty 01](.scratch/benchmark-szkieletu/issues/01-skrot-przez-skale.md). Przy odbiorze poproś o polecenie odtwarzające raport. Sprawdź między innymi, czy dodanie stacji pośrodku skrótu zachowuje zmierzone 5,66 m poza korytarzem.
+
+| Kiedy | Co czytać lub przeglądać |
+|---|---|
+| Uzgadniasz zakres etapu | [Specyfikacja i pięć kart](.scratch/benchmark-szkieletu/spec.md). Sprawdź, co zobaczysz po wykonaniu każdej karty i od czego zależy jej rozpoczęcie. |
+| Rozstrzygasz przypadek terenowy | [Metodyka oceny](docs/badania/ocena-szkieletu.md) i [próba na Kalackiej](docs/badania/rozpoznanie.md#próba-na-rozwidleniu-kalackiej). Obejrzyj rysunek, wzorzec i przebieg ciągu. Dokładne liczby znajdziesz w podlinkowanych raportach. |
+| Odbierasz zmianę | Kryteria wybranej karty, sekcja `Wynik` uzupełniona przez wykonawcę i diff PR-a. Zielone CI potwierdza kontrole programowe. Przykład geometryczny pozwala ocenić interpretację jaskini. |
+| Agent zaczyna w czystym oknie | [AGENTS.md](AGENTS.md) prowadzi do [zasad trackera](docs/agents/issue-tracker.md), słownika i dokumentacji dziedzinowej. Człowiek sięga po te instrukcje, gdy zmienia sposób pracy albo znaczenie terminu. |
+
+W tym projekcie `grill-with-docs` służy do wyjaśniania nowych problemów, `to-spec` zapisuje uzgodniony rezultat, a `to-tickets` dzieli go na sprawdzalne zadania. Dla tej specyfikacji podział jest już gotowy. Do świeżego okna przekaż ścieżkę jednej karty i użyj `implement`. Agent stosuje `tdd` do zachowania opisanego w karcie, a `code-review` porównuje zmianę z jej zakresem i standardami repozytorium. [Skille Matta Pococka użyte w projekcie](https://github.com/mattpocock/skills/tree/abeeaf95660ba9e8b7c753eb38f441ca707a8823/skills/engineering)
+
+W czystym oknie projektu możesz wkleić poniższy prompt.
+
+> Użyj skilla Matta `implement`. Na osobnej gałęzi wykonaj wyłącznie kartę `.scratch/benchmark-szkieletu/issues/01-skrot-przez-skale.md`. Zacznij od rewizji zawierającej tę kartę i przeczytaj nadrzędną specyfikację. Uruchom benchmark dla sali, zakrętu, zakrętu z dodatkową stacją oraz odcinka bez wzorca. W sekcji „Wynik” karty zapisz polecenie odtworzenia i wyniki dla czterech kryteriów. Po testach i przeglądzie zmian zakończ pracę na karcie 01.
+
 ## Uruchomienie
 
 Potrzebujesz Pythona 3.11 lub nowszego i `uv`. Uruchom polecenia z katalogu repozytorium. Podaj ścieżkę do własnego skanu i nowy katalog wyników. Parametr `--voxel` określa bok komórki w jednostkach źródłowego XYZ.
@@ -69,6 +86,8 @@ uv run --frozen python scripts/preview_lidar_svx.py skan.laz \
 **Granica interpretacji.** Dwie rozległe, równoległe powierzchnie mogą dać głosy w kilku kierunkach nawet przy braku bocznych ścian. Gęste odbicia od rumoszu mogą tworzyć wyspy i pozorne obejścia. Wąskie przewężenia, luki w obserwacji i dwa połączenia mieszczące się w tej samej parze pasm mogą zniknąć. To, które odnogi i obejścia stanowią osobne korytarze jaskini, wymaga obejrzenia przekrojów albo niezależnej dokumentacji terenowej.
 
 ## Samodzielna ocena ciągłości
+
+Pierwszą próbę odtworzenia rozwidlenia Kalackiej z syntetycznej chmury można obejrzeć w Aven. Dokładność oceniono osobno dla każdego ramienia. [Wynik i rozpoznanie danych](docs/badania/rozpoznanie.md) · [Metryki szkieletu i podział danych badawczych](docs/badania/ocena-szkieletu.md)
 
 `scripts/benchmark_continuity.py synthetic` generuje chmury XYZ o znanej geometrii, uruchamia ten sam generator, a następnie porównuje odcinki ze wzorcem. W raporcie sprawdź liczbę połączonych fragmentów i cykli, pokrycie znanej osi przez jeden ciąg oraz odsetek długości odcinków wewnątrz korytarza. Opcja `--holdout` zmienia orientację skanu, próbkowanie i położenie siatki. Argumenty po `--` trafiają do generatora.
 
