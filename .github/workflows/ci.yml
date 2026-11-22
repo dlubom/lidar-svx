@@ -19,6 +19,8 @@ jobs:
     name: Lint, types and build
     runs-on: ubuntu-24.04
     timeout-minutes: 10
+    outputs:
+      passed: ${{ steps.build.outputs.passed }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -31,46 +33,47 @@ jobs:
       - run: uv run --no-sync ruff check
       - run: uv run --no-sync ruff format --check
       - run: uv run --no-sync mypy
-      - run: uv build
-
-  tests:
-    name: Tests (Python ${{ matrix.python-version }})
-    runs-on: ubuntu-24.04
-    timeout-minutes: 15
-    strategy:
-      fail-fast: false
-      matrix:
-        python-version: ["3.11", "3.12", "3.13", "3.14"]
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          persist-credentials: false
-      - uses: astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2 # v10.3.3
-        with:
-          version: "0.11.8"
-          python-version: ${{ matrix.python-version }}
-      - name: Install Survex
+      - name: Build distributions
+        id: build
         run: |
-          sudo apt-get update
-          sudo apt-get install -y --no-install-recommends survex
-          command -v cavern
-          command -v dump3d
-      - run: uv sync --locked
-      - run: uv run --no-sync pytest -q --cov
+          uv build
+          echo "passed=true" >> "$GITHUB_OUTPUT"
+
+  # Keep each Python result visible to the gate, including unstarted jobs.
+  tests-311:
+    name: Tests (Python 3.11)
+    uses: ./.github/workflows/python-tests.yml
+    with:
+      python-version: "3.11"
+
+  tests-312:
+    name: Tests (Python 3.12)
+    uses: ./.github/workflows/python-tests.yml
+    with:
+      python-version: "3.12"
+
+  tests-313:
+    name: Tests (Python 3.13)
+    uses: ./.github/workflows/python-tests.yml
+    with:
+      python-version: "3.13"
+
+  tests-314:
+    name: Tests (Python 3.14)
+    uses: ./.github/workflows/python-tests.yml
+    with:
+      python-version: "3.14"
 
   gate:
     name: CI gate
     runs-on: ubuntu-24.04
     timeout-minutes: 5
-    needs: [quality, tests]
+    needs: [quality, tests-311, tests-312, tests-313, tests-314]
     if: ${{ always() }}
-    env:
-      QUALITY_RESULT: ${{ needs.quality.result }}
-      TESTS_RESULT: ${{ needs.tests.result }}
     steps:
       - name: Require all jobs to succeed
+        env:
+          JOB_RESULTS: ${{ toJSON(needs) }}
         run: |
-          if [[ "$QUALITY_RESULT" != success || "$TESTS_RESULT" != success ]]; then
-            printf 'Lint, types and build: %s\nTests: %s\n' "$QUALITY_RESULT" "$TESTS_RESULT"
-            exit 1
-          fi
+          jq 'map_values({result, passed: .outputs.passed})' <<< "$JOB_RESULTS"
+          jq -e 'length == 5 and all(.[]; .result == "success" and .outputs.passed == "true")' <<< "$JOB_RESULTS"
