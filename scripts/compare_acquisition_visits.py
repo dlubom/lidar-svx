@@ -39,7 +39,7 @@ def fit_translation(source, target, probe, *, extent, spacing):
     normals = vectors[:, :, 0]
     planar = eig[:, 0] < 0.25 * eig[:, 1]
     shift = np.zeros(3)
-    for iteration in range(30):
+    for iteration in range(30):  # noqa: B007 (reported after the loop)
         distance, j = tree.query(train + shift)
         n = normals[j]
         residual = np.einsum("ij,ij->i", n, train + shift - fit_target[j])
@@ -143,7 +143,7 @@ def _plot(path, report, visits, groups, intersections):
     colors = ["#11658a", "#bb632d"]
     legend = []
     witnesses = []
-    for group, visit, color in zip(groups, visits, colors):
+    for group, visit, color in zip(groups, visits, colors, strict=True):
         centered = group - probe
         selected = np.flatnonzero(
             (abs(centered[:, axis]) <= report["slab_width_source_units"] / 2)
@@ -221,6 +221,7 @@ def _plot(path, report, visits, groups, intersections):
         [probe, middle],
         [radius, radius / 3],
         ["Oba przejścia", "Zbliżenie przewężenia"],
+        strict=True,
     ):
         for row in intersections:
             xyz = row["xyz"]
@@ -307,6 +308,7 @@ def main():
             reader.seek(lo)
             pts = reader.read_points(hi - lo)
             xyz.append(np.column_stack((pts.x, pts.y, pts.z)))
+    first, second = xyz
     probe = np.array(report["probe_xyz"])
     try:
         result = {
@@ -320,10 +322,10 @@ def main():
             "cube_half_extent": args.extent,
             "spacing": args.spacing,
             "forward": fit_translation(
-                *xyz, probe, extent=args.extent, spacing=args.spacing
+                first, second, probe, extent=args.extent, spacing=args.spacing
             ),
             "reverse": fit_translation(
-                *reversed(xyz), probe, extent=args.extent, spacing=args.spacing
+                second, first, probe, extent=args.extent, spacing=args.spacing
             ),
             "method": "Translation-only point-to-plane ICP. Source cells split by alternating spatial patches of side 8*spacing; target split into disjoint alternating rows after clipping. Validation compares held-out source cells to raw held-out target returns. All vectors use original LAS axes and units.",
             "interpretation": "A reversible local offset that reduces held-out distances is consistent with misregistration. Differences in visible surfaces or moving objects can also contribute. Source coordinates and the survey graph are untouched.",

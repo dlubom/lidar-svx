@@ -7,6 +7,7 @@ from pathlib import Path
 
 import laspy
 import numpy as np
+from numpy.typing import NDArray
 
 
 @dataclass
@@ -108,13 +109,15 @@ def read_cloud(
     low, high, metadata, chunks = _source_info(path, chunk_size)
     if not np.isfinite([low, high]).all() or np.any(high < low):
         raise ValueError("empty input or invalid XYZ bounds")
-    shape = tuple(int(np.floor((b - a) / voxel)) + 1 for a, b in zip(low, high))
+    shape = tuple(
+        int(np.floor((b - a) / voxel)) + 1 for a, b in zip(low, high, strict=True)
+    )
     if prod(shape) > np.iinfo(np.int64).max:
         raise ValueError(
             "voxel grid exceeds 64-bit indexing; increase --voxel or crop the scan"
         )
     # Merge pairs of equally sized batches to bound memory without rescanning old cells each time.
-    levels = []
+    levels: list[NDArray[np.void] | None] = []
     count = 0
     for points in chunks(path, chunk_size):
         indices = np.floor((points - low) / voxel).astype(np.int64)
@@ -139,10 +142,12 @@ def read_cloud(
         levels[level] = cells
     if not count or count != metadata.get("header_record_count", count):
         raise ValueError("empty scan or point count inconsistent with LAS header")
-    cells = None
+    merged: NDArray[np.void] | None = None
     for batch in reversed(levels):
         if batch is not None:
-            cells = batch if cells is None else _merge(cells, batch)
+            merged = batch if merged is None else _merge(merged, batch)
+    assert merged is not None
+    cells = merged
     metadata.update(
         record_count=count,
         occupied_before_filter=len(cells),

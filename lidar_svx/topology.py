@@ -50,7 +50,7 @@ def _interface_connections(pairs, band, clearance):
 
 def _persistent_connections(pairs, region_count):
     """Suppress terminal branches spanning at most two distance bands."""
-    adjacency = [set() for _ in range(region_count)]
+    adjacency: list[set[int]] = [set() for _ in range(region_count)]
     for a, b in pairs:
         adjacency[a].add(b)
         adjacency[b].add(a)
@@ -98,7 +98,7 @@ def _route_regions(points, inside_graph, centers, ports, pairs):
     # back its single-ended stem so that it cannot become a false branch.
     degree = np.bincount(pairs.ravel(), minlength=len(centers))
     keep = ends | set(centers[degree == 1])
-    neighbors = {}
+    neighbors: dict[int, set[int]] = {}
     for a, b in legs:
         neighbors.setdefault(a, set()).add(b)
         neighbors.setdefault(b, set()).add(a)
@@ -174,7 +174,7 @@ def _band_network(mask, width, *, boundary_diagnostics=None):
 def _prune_branches(points, adj, threshold):
     """Peel terminal chains shorter than threshold, retaining cyclic cores."""
     while threshold > 0:
-        discarded = set()
+        discarded: set[tuple[int, int]] = set()
         for leaf, neighbors in enumerate(adj):
             if len(neighbors) != 1:
                 continue
@@ -232,7 +232,7 @@ def extract_network(
         raise ValueError("band_width must be finite and at least one voxel")
     low = occupied.min(axis=0)
     high = occupied.max(axis=0)
-    shape = tuple(int(b) - int(a) + 1 for a, b in zip(low, high))
+    shape = tuple(int(b) - int(a) + 1 for a, b in zip(low, high, strict=True))
     cells = occupied.astype(np.int64) - low.astype(np.int64)
     if global_parity and wall_span is not None:
         raise ValueError("choose either a local wall span or global parity")
@@ -283,7 +283,7 @@ def extract_network(
         )
         info["edges_before_pruning"] += len(edges)
         if len(edges) and min_branch_length > 0:
-            adjacency = [set() for _ in points]
+            adjacency: list[set[int]] = [set() for _ in points]
             for a, b in edges:
                 adjacency[a].add(b)
                 adjacency[b].add(a)

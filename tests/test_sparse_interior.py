@@ -1,9 +1,9 @@
 import numpy as np
 from scipy import ndimage
 
+from lidar_svx.generalize import generalize
 from lidar_svx.grid import SparseMask
 from lidar_svx.topology import _band_network
-from lidar_svx.generalize import generalize
 
 
 def test_sparse_corridor_matches_dense_clearance_routing_and_chords():
@@ -18,5 +18,5 @@ def test_sparse_corridor_matches_dense_clearance_routing_and_chords():
     for variant in (tube, mask):
         stations, legs = _band_network(variant, 4)
         masks.append(generalize(stations, legs, variant, 1.5))
-    for a, b in zip(*masks):
+    for a, b in zip(*masks, strict=True):
         np.testing.assert_array_equal(a, b)

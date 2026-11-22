@@ -36,7 +36,7 @@ def test_pure_cycle_and_two_routes_between_junctions_survive():
     assert len(set(map(tuple, np.sort(legs, axis=1)))) == len(legs)
     assert all(a != b for a, b in legs)
     assert len(legs) - len(xyz) + 2 == 2
-    assert sorted(np.bincount(legs.ravel())).count(3) == 2
+    assert np.count_nonzero(np.bincount(legs.ravel()) == 3) == 2
 
 
 def test_chord_grazing_unknown_corner_is_rejected():

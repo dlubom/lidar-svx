@@ -10,6 +10,7 @@ import hashlib
 import json
 from dataclasses import dataclass
 from importlib.metadata import version
+from itertools import pairwise
 from pathlib import Path
 
 import laspy
@@ -37,12 +38,13 @@ class Window:
 def _blocks(reader):
     """Stream one contiguous source block at a time; reject oversized blocks."""
     current = None
-    samples, stamps = [], []
+    samples: list[np.ndarray] = []
+    stamps: list[np.ndarray] = []
     offset = 0
     for batch in reader.chunk_iterator(125_000):
         ids = np.asarray(batch.point_source_id)
         cuts = np.r_[0, np.flatnonzero(ids[:-1] != ids[1:]) + 1, len(ids)]
-        for lo, hi in zip(cuts, cuts[1:]):
+        for lo, hi in pairwise(cuts):
             source_id = int(ids[lo])
             if current is None or source_id != current.source_id:
                 if current is not None:
@@ -166,7 +168,7 @@ def acquisition_report(path, probe, *, axis, radius, slab_width):
             delta = centers[:, axis] - probe[axis]
             epsilon = 16 * np.finfo(float).eps * max(1, abs(probe[axis]))
             off_plane = np.flatnonzero(abs(delta) > epsilon)
-            for k, j in zip(off_plane[:-1], off_plane[1:]):
+            for k, j in pairwise(off_plane):
                 if (delta[k] < 0) == (delta[j] < 0) or j - k > 2:
                     continue  # Tangency, or an extended coplanar run without a unique crossing.
                 start, end = centers[k], centers[j]

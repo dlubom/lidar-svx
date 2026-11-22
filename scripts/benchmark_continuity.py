@@ -5,15 +5,16 @@ file in shuffled order, without timestamps, returns labelled by corridor, or gui
 """
 
 import argparse
-from collections import Counter
 import csv
-from dataclasses import dataclass
 import hashlib
 import json
-from pathlib import Path
 import subprocess
 import sys
 import tempfile
+from collections import Counter
+from dataclasses import dataclass
+from itertools import pairwise
+from pathlib import Path
 
 import numpy as np
 from scipy.sparse import coo_matrix
@@ -220,7 +221,7 @@ def score_synthetic(directory, truth, rank):
     _, points, edges, count, components = read_graph(directory)
     segments = points[edges]
     groups = sorted({t.component for t in truth})
-    covered = []
+    covered_counts = []
     sample_count = []
     curve_coverage = []
     curve_distances = []
@@ -228,13 +229,13 @@ def score_synthetic(directory, truth, rank):
         curves = [resample(t.axis, 0.20) for t in truth if t.component == group]
         samples = np.concatenate(curves)
         d = component_distances(samples, segments, components)
-        covered.append(np.count_nonzero(d <= 0.8, axis=0))
+        covered_counts.append(np.count_nonzero(d <= 0.8, axis=0))
         sample_count.append(len(samples))
-        best = int(covered[-1].argmax())
+        best = int(np.argmax(covered_counts[-1]))
         for part in np.split(d[:, best], np.cumsum([len(c) for c in curves])[:-1]):
             curve_coverage.append(float((part <= 0.8).mean()))
             curve_distances.append(np.round(np.percentile(part, [50, 90]), 4).tolist())
-    covered = np.array(covered)
+    covered = np.array(covered_counts)
     share = covered / np.array(sample_count)[:, None]
     tips = true_tips(truth)
     ends = points[np.bincount(edges.ravel(), minlength=len(points)) == 1]
@@ -244,19 +245,21 @@ def score_synthetic(directory, truth, rank):
     # by its own interval length instead of counting long and short legs equally.
     lengths = np.linalg.norm(segments[:, 1] - segments[:, 0], axis=1)
     probes, weights = [], []
-    for segment, length in zip(segments, lengths):
+    for segment, length in zip(segments, lengths, strict=True):
         n = max(1, int(np.ceil(length / 0.08)))
         fraction = (0.5 + np.arange(n)) / n
         probes.append(segment[0] + fraction[:, None] * (segment[1] - segment[0]))
         weights.append(np.full(n, length / n))
-    probes, weights = np.concatenate(probes), np.concatenate(weights)
-    inside = np.zeros(len(probes), bool)
+    probe_points, probe_weights = np.concatenate(probes), np.concatenate(weights)
+    inside = np.zeros(len(probe_points), bool)
     for t in truth:
-        distance, nearest = cKDTree(t.axis).query(probes)
+        distance, nearest = cKDTree(t.axis).query(probe_points)
         supported = distance <= t.radius[nearest]
         if not np.allclose(t.axis[0], t.axis[-1]):
             for end, neighbor in ((0, 1), (len(t.axis) - 1, -2)):
-                outside = (probes - t.axis[end]) @ (t.axis[neighbor] - t.axis[end]) < 0
+                outside = (probe_points - t.axis[end]) @ (
+                    t.axis[neighbor] - t.axis[end]
+                ) < 0
                 supported &= ~((nearest == end) & outside)
         inside |= supported
     return {
@@ -277,7 +280,7 @@ def score_synthetic(directory, truth, rank):
             np.count_nonzero((share >= 0.20).sum(axis=0) >= 2)
         ),
         "sampled_length_inside_true_tubes_fraction": float(
-            np.round(weights[inside].sum() / weights.sum(), 5)
+            np.round(probe_weights[inside].sum() / probe_weights.sum(), 5)
         ),
     }
 
@@ -469,7 +472,7 @@ def native_check(directory, names, points, edges, manifest):
 def linked_reference(axis_csv):
     with axis_csv.open(newline="") as f:
         axis = list(csv.DictReader(f))
-    selected = set()
+    selected: set[int] = set()
     for i, row in enumerate(axis[:-1]):
         if int(row["edge_exported"]):
             selected.update((i, i + 1))
@@ -518,11 +521,12 @@ def check_routes(points, names, edges, components, ids, truth, pairs, cross_y):
             )
             projections.append(projections_all[i])
             legs.append(i)
+        crossings_at_y: list[list[float]] = []
         row = {
             "anchors": anchors,
             "connected": bool(components[legs[0]] == components[legs[1]]),
             "shortest_graph_length": None,
-            "crossings_at_y": [],
+            "crossings_at_y": crossings_at_y,
         }
         if row["connected"]:
             p, q = projections
@@ -549,12 +553,12 @@ def check_routes(points, names, edges, components, ids, truth, pairs, cross_y):
                 np.linalg.norm(np.diff(path, axis=0), axis=1).sum()
             )
             if cross_y is not None:
-                for start, end in zip(path, path[1:]):
+                for start, end in pairwise(path):
                     if min(start[1], end[1]) <= cross_y < max(start[1], end[1]):
                         crossing = start + (
                             (cross_y - start[1]) / (end[1] - start[1])
                         ) * (end - start)
-                        row["crossings_at_y"].append(crossing.tolist())
+                        crossings_at_y.append(crossing.tolist())
         result.append(row)
     return result
 
@@ -662,7 +666,7 @@ def comparison_figure(source, before, after, axis_csv, radius, output):
         _, xyz, edges, count, labels = read_graph(directory)
         segments = xyz[edges]
         lengths = np.linalg.norm(segments[:, 1] - segments[:, 0], axis=1)
-        largest = np.bincount(labels, weights=lengths).argmax()
+        largest = np.argmax(np.bincount(labels, weights=lengths))
         hits = component_distances(ref, segments, labels) <= radius
         graph.append(
             (segments, labels == largest, count, hits[:, largest], hits.any(axis=1))
@@ -681,8 +685,8 @@ def comparison_figure(source, before, after, axis_csv, radius, output):
             i, j = ij[((ij >= 0) & (ij < [nx, ny])).all(axis=1)].T
             density += np.bincount(j * nx + i, minlength=nx * ny).reshape(density.shape)
     colors = {"main": "#007269", "other": "#bc5b29", "far": "#cdd2d5"}
-    fig = plt.figure(figsize=(11.5, 7.2), layout="constrained")
-    fig.get_layout_engine().set(h_pad=0.10, hspace=0.18)
+    fig = plt.figure(figsize=(11.5, 7.2))
+    fig.set_layout_engine("constrained", h_pad=0.10, hspace=0.18)
     grid = fig.add_gridspec(2, 2, height_ratios=[4.6, 1.1])
     strip = fig.add_subplot(grid[1, :])
     for i, (segments, main, count, hit_main, hit_any) in enumerate(graph):
@@ -709,7 +713,7 @@ def comparison_figure(source, before, after, axis_csv, radius, output):
         )
         ax.spines[["top", "right"]].set_visible(False)
         # Each one-unit-wide bar represents one historical station, including blank missing IDs.
-        color = np.where(
+        station_colors = np.where(
             hit_main, colors["main"], np.where(hit_any, colors["other"], colors["far"])
         )
         strip.bar(
@@ -717,7 +721,7 @@ def comparison_figure(source, before, after, axis_csv, radius, output):
             np.full(len(ref), 0.58),
             bottom=1 - i - 0.29,
             width=1.01,
-            color=color,
+            color=station_colors,
             linewidth=0,
         )
     strip.set(

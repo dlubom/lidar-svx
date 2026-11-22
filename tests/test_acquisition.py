@@ -8,7 +8,9 @@ from lidar_svx.acquisition import acquisition_report
 def write_visits(path, *, break_time=False):
     rng = np.random.default_rng(121)
     radii = np.linspace(0, 2 * np.pi, 32, endpoint=False)
-    xyz, times, ids = [], [], []
+    xyz: list[np.ndarray] = []
+    times: list[np.float64] = []
+    ids: list[int] = []
     y = np.r_[np.linspace(-8, 8, 45), np.linspace(8, -8, 45)]
     for block, centers in enumerate(y.reshape(-1, 5)):
         points = np.array([[np.cos(a), p, np.sin(a)] for p in centers for a in radii])

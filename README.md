@@ -79,6 +79,17 @@ uv run --frozen python scripts/benchmark_continuity.py synthetic --holdout -- \
 
 Dla własnego skanu z dostępną wcześniejszą osią tryb `real` przyjmuje CSV z kolumnami `station,x,y,z,edge_exported`. Dla dwóch wskazanych stacji znajduje ich najbliższe punkty na skończonych odcinkach i sprawdza, czy między nimi prowadzi droga w wyeksportowanej sieci. Błędy położenia końców podaje osobno.
 
-Testy wytwarzają własne dane, także w formacie LAZ. Uruchom je poleceniem `uv run --frozen pytest -q tests`.
-
 Dodatkowa kontrola dwóch wizyt skanera w tym samym przekroju jest dostępna dla plików LAS/LAZ z uporządkowanymi blokami akwizycji i czasem GPS. Opcje pokazują `uv run --frozen python -m lidar_svx.acquisition --help` i `uv run --frozen python scripts/compare_acquisition_visits.py --help`.
+
+## Kontrole jakości
+
+```sh
+uv sync --locked
+uv run --no-sync ruff check
+uv run --no-sync ruff format --check
+uv run --no-sync mypy
+uv run --no-sync pytest -q --cov
+uv build
+```
+
+Testy generują własne dane, także w formacie LAZ. Do testu kompilacji eksportu potrzebne są `cavern` i `dump3d` z pakietu Survex. GitHub Actions instaluje je i uruchamia cały zestaw na Pythonie 3.11–3.14. Minimalne pokrycie pakietu z uwzględnieniem rozgałęzień wynosi 85%. Wyniki wszystkich zadań zbiera kontrola `CI gate`.

@@ -3,6 +3,7 @@ import shutil
 import subprocess
 import tempfile
 import unittest
+from itertools import pairwise
 from pathlib import Path
 
 import numpy as np
@@ -70,7 +71,7 @@ class NetworkExportTest(unittest.TestCase):
             np.testing.assert_array_equal(self.points[ends], xyz)
             self.assertAlmostEqual(
                 float(row["length_m"]),
-                np.linalg.norm(np.diff(xyz, axis=0)) * self.scale,
+                float(np.linalg.norm(np.diff(xyz, axis=0)) * self.scale),
             )
         svx = (self.output / "network.svx").read_text()
         self.assertEqual(svx.count("*fix "), 2)
@@ -151,7 +152,7 @@ class NetworkExportTest(unittest.TestCase):
             walk = [int(s[1:]) for s in row["stations"].split()]
             self.assertEqual(walk[0], walk[-1])
             self.assertEqual(len(walk) - 1, len(set(walk)))
-            walked = {frozenset((a, b)) for a, b in zip(walk, walk[1:])}
+            walked = {frozenset(edge) for edge in pairwise(walk)}
             self.assertLessEqual(walked, existing)
             self.assertTrue(walked)
             used_walks.append(walked)
